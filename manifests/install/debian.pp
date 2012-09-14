@@ -2,6 +2,10 @@ class graphite::install::debian {
 
 	require graphite::params
 
+  Exec {
+    path => '/bin:/usr/bin:/usr/sbin',
+  }
+
 	# for full functionality we need this packages:
 	# madatory: python-cairo, python-django, python-twisted, python-django-tagging, python-simplejson
 	# optinal: python-ldap, python-memcache, memcached, python-sqlite
@@ -55,19 +59,5 @@ class graphite::install::debian {
 			refreshonly => true,
 			require => [Exec["Download and untar $whisperVersion"],Anchor["graphitepkg::end"]];
 	}
-
-	# initialize database
-
-	# Because the django isntall of debian sucks we have to 
-	# create our own symlinks to python lib dir.
-	# you find your lib dir wiht: 
-	#   python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()";
-	file {
-		"/usr/lib/python2.6/dist-packages/django":
-			ensure => link,
-			target => "/usr/lib/pymodules/python2.6/django",
-			require => Anchor["graphitepkg::end"];
-	}
-	
 }
 
